@@ -11,6 +11,7 @@ fos_rest:
     format_listener:
         rules:
             - { path: '^/', priorities: ['json'], fallback_format: 'json' }
+    param_fetcher_listener: force
 #    param_fetcher_listener:  true
 #    allowed_methods_listener:  true
 #    routing_loader: true
