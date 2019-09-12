@@ -20,7 +20,7 @@ class MobilePhoneController extends AbstractController
 {
     /**
      * @Get(
-     *      path = "/products/{id}",
+     *      path = "/api/products/{id}",
      * )
      * @View()
      */
@@ -31,7 +31,7 @@ class MobilePhoneController extends AbstractController
 
     /**
      * @Get(
-     *      path = "/products",
+     *      path = "/api/products",
      * )
      * @Rest\QueryParam(
      *     name="keyword",
@@ -48,7 +48,7 @@ class MobilePhoneController extends AbstractController
      * @Rest\QueryParam(
      *     name="limit",
      *     requirements="\d+",
-     *     default="15",
+     *     default="10",
      *     description="Max number of phones per page."
      * )
      * @Rest\QueryParam(
@@ -61,7 +61,7 @@ class MobilePhoneController extends AbstractController
      */
     public function listProducts(ParamFetcher $paramFetcher)
     {
-        $pager = $this->getDoctrine()->getRepository(MobilePhone::class)->search(
+        $pager = $this->getDoctrine()->getRepository(MobilePhone::class)->findProducts(
             // $paramFetcher->get('keyword'),
             // $paramFetcher->get('order'),
             $paramFetcher->get('limit'),

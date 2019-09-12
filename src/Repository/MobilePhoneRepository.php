@@ -20,7 +20,7 @@ class MobilePhoneRepository extends AbstractRepository
     }
 
 
-    public function search($term, $order = 'asc', $limit = 20, $offset = 0)
+    public function findProducts($term, $order = 'asc', $limit = 10, $offset = 0)
     {
         $qb = $this
             ->createQueryBuilder('p')
