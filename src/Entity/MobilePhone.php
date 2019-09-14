@@ -10,7 +10,6 @@ use JMS\Serializer\Annotation\Expose;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\MobilePhoneRepository")
- * @ExclusionPolicy("all")
  */
 class MobilePhone
 {
@@ -18,45 +17,45 @@ class MobilePhone
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * 
-     * @Expose
+     * @Serializer\Groups({"list"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=55)
-     * 
-     * @Expose
+     * @Serializer\Groups({"list", "detail"})
      */
     private $model;
 
     /**
      * @ORM\Column(type="string", length=55)
-     * 
-     * @Expose
+     * @Serializer\Groups({"list", "detail"})
      */
     private $brand;
 
     /**
      * @ORM\Column(type="string", length=55)
-     * 
-     * @Expose
+     * @Serializer\Groups({"detail"})
      */
     private $color;
 
     /**
      * @ORM\Column(type="integer")
-     * 
-     * @Expose
+     * @Serializer\Groups({"detail"})
      */
     private $storage;
 
     /**
      * @ORM\Column(type="decimal", precision=6, scale=2)
-     * 
-     * @Expose
+     * @Serializer\Groups({"detail"})
      */
     private $price;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="phoneChoice")
+     * @Serializer\Groups({"detail"})
+     */
+    private $user;
 
     public function getId(): ?int
     {
@@ -119,6 +118,18 @@ class MobilePhone
     public function setPrice(string $price): self
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

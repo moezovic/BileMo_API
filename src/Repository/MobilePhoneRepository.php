@@ -20,19 +20,19 @@ class MobilePhoneRepository extends AbstractRepository
     }
 
 
-    public function findProducts($term, $order = 'asc', $limit = 10, $offset = 0)
+    public function findProducts($user, $order = 'asc', $limit = 10, $offset = 0)
     {
         $qb = $this
             ->createQueryBuilder('p')
-            // ->orderBy('p.brand', $order)
+            ->orderBy('p.brand', $order)
         ;
         
-        // if ($term) {
-        //     $qb
-        //         #->where('a.title LIKE ?1')
-        //         #->setParameter(1, '%'.$term.'%')
-        //     ;
-        // }
+        if ($user) {
+            $qb
+                ->where('p.user = :user')
+                ->setParameter(user, $this->getUser()->getId())
+            ;
+        }
         
         return $this->paginate($qb, $limit, $offset);
     }

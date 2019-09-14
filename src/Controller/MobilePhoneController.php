@@ -22,7 +22,7 @@ class MobilePhoneController extends AbstractController
      * @Get(
      *      path = "/api/products/{id}",
      * )
-     * @View()
+     * @View(serializerGroups={"detail"})
      */
     public function showProduct(MobilePhone $product)
     {
@@ -34,10 +34,10 @@ class MobilePhoneController extends AbstractController
      *      path = "/api/products",
      * )
      * @Rest\QueryParam(
-     *     name="keyword",
+     *     name="user",
      *     requirements="[a-zA-Z0-9]",
-     *     nullable=true,
-     *     description="The keyword to search for."
+     *     default=false,
+     *     description="find product list by user."
      * )
      * @Rest\QueryParam(
      *     name="order",
@@ -60,10 +60,11 @@ class MobilePhoneController extends AbstractController
      * @View()
      */
     public function listProducts(ParamFetcher $paramFetcher)
-    {
+    {   
+
         $pager = $this->getDoctrine()->getRepository(MobilePhone::class)->findProducts(
-            // $paramFetcher->get('keyword'),
-            // $paramFetcher->get('order'),
+            $paramFetcher->get('user'),
+            $paramFetcher->get('order'),
             $paramFetcher->get('limit'),
             $paramFetcher->get('offset')
         );
