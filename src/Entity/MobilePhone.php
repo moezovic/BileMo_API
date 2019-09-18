@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
@@ -23,30 +24,36 @@ class MobilePhone
 
     /**
      * @ORM\Column(type="string", length=55)
+     * @Assert\NotBlank
      * @Serializer\Groups({"list", "detail"})
      */
     private $model;
 
     /**
      * @ORM\Column(type="string", length=55)
+     * @Assert\NotBlank
      * @Serializer\Groups({"list", "detail"})
      */
     private $brand;
 
     /**
      * @ORM\Column(type="string", length=55)
+     * @Assert\NotBlank
      * @Serializer\Groups({"detail"})
      */
     private $color;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank
+     * @Assert\Choice({"32", "64", "128", "256"})
      * @Serializer\Groups({"detail"})
      */
     private $storage;
 
     /**
      * @ORM\Column(type="decimal", precision=6, scale=2)
+     * @Assert\NotBlank
      * @Serializer\Groups({"detail"})
      */
     private $price;

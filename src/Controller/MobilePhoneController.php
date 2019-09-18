@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Routing\Annotation\Route;
 
 use App\Entity\MobilePhone;
@@ -16,7 +16,7 @@ use App\Representation\Phones;
 
 
 
-class MobilePhoneController extends AbstractController
+class MobilePhoneController extends AbstractFOSRestController
 {
     /**
      * @Get(

@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 use Symfony\Component\Routing\Annotation\Route;
 
 use App\Entity\User;
@@ -15,9 +15,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Request\ParamFetcher;
 use App\Representation\Users;
+use Symfony\Component\Validator\ConstraintViolationList;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
+use Symfony\Component\HttpFoundation\Response;
 
 
-class ClientController extends AbstractController
+class ClientController extends AbstractFOSRestController
 {
     private $em;
 
@@ -82,12 +85,18 @@ class ClientController extends AbstractController
     }
 
    /** 
-    * @Rest\Post("/api/users")
+    * @Rest\Post(
+    *            Path = "/api/users",
+    *            name = "create_user")
     * @Rest\View
     * @ParamConverter("user", converter="fos_rest.request_body")
     */
-    public function addUSer(User $user){
-
+    public function addUSer(User $user, ConstraintViolationList $violations)
+    {
+        if (count($violations)) {
+            return $this->view($violations, Response::HTTP_BAD_REQUEST);
+        }
+        
         $this->em->persist($user);
         $this->em->flush();
 
@@ -106,12 +115,15 @@ class ClientController extends AbstractController
      *              name = "delete_user",
      *              requirements = {"id" = "\d+"}
      * )
-     * @Rest\View()
+     * @Rest\View(
+     *     populateDefaultVars = false,
+     *     statusCode = 204
+     *     )
+     * @ParamConverter("user", converter="fos_rest.request_body")
      */
-    public function deleteUSer($id)
+    public function deleteUSer(User $user)
     {
-        $user = $this->getDoctrine()->getRepository(User::class)->findById($id);
-        
+        dump($user); die;
         if(null == $user){
             // throw customized Exception
         }
