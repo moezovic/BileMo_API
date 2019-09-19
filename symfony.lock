@@ -213,6 +213,9 @@
     "symfony/event-dispatcher-contracts": {
         "version": "v1.1.5"
     },
+    "symfony/expression-language": {
+        "version": "v4.3.4"
+    },
     "symfony/filesystem": {
         "version": "v4.3.4"
     },
@@ -412,6 +415,12 @@
     },
     "white-october/pagerfanta-bundle": {
         "version": "v1.2.4"
+    },
+    "willdurand/hateoas": {
+        "version": "2.12.0"
+    },
+    "willdurand/hateoas-bundle": {
+        "version": "1.4.0"
     },
     "willdurand/jsonp-callback-validator": {
         "version": "v1.1.0"

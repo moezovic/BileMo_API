@@ -32,6 +32,7 @@ class ClientController extends AbstractFOSRestController
     /**
      * @Get(
      *      path = "/api/users",
+     *      name = "show_users_list"
      * )
      * @Rest\QueryParam(
      *     name="product",
@@ -75,7 +76,7 @@ class ClientController extends AbstractFOSRestController
     /**
      * @Get(
      *      path = "/api/users/{id}",
-     *      name = "show_user",
+     *      name = "show_user_details",
      * )
      * @View(serializerGroups={"detail"})
      */

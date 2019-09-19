@@ -21,6 +21,7 @@ class MobilePhoneController extends AbstractFOSRestController
     /**
      * @Get(
      *      path = "/api/products/{id}",
+     *      name = "show_product_details"
      * )
      * @View(serializerGroups={"detail"})
      */
@@ -32,6 +33,7 @@ class MobilePhoneController extends AbstractFOSRestController
     /**
      * @Get(
      *      path = "/api/products",
+     *      name = "show_products_list"
      * )
      * @Rest\QueryParam(
      *     name="user",
