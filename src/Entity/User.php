@@ -55,35 +55,49 @@ class User
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * 
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({ "list"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=55)
+     * 
      * @Assert\NotBlank
+     * 
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"list", "detail"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=55)
+     * 
      * @Assert\NotBlank
+     * 
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"list", "detail"})
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="integer")
+     * 
      * @Assert\NotBlank
      * @Assert\Regex("/^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/")
+     * 
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"detail"})
      */
     private $phoneNumber;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * 
      * @Assert\NotBlank
+     * 
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"detail"})
      */
     private $address;
@@ -96,6 +110,8 @@ class User
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\MobilePhone", mappedBy="user", cascade={"persist"})
+     * 
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"detail"})
      */
     private $phoneChoice;
