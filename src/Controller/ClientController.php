@@ -9,6 +9,8 @@ use App\Entity\User;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use  FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\View;
+use Nelmio\ApiDocBundle\Annotation as Doc;
+use Swagger\Annotations as SWG;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -59,6 +61,20 @@ class ClientController extends AbstractFOSRestController
      *     description="The pagination offset"
      * )
      * @View()
+     * 
+     * @Doc\Operation(
+     *     tags={"Users"},
+     *     summary="Get the list of all users.",
+     *     @SWG\Response(
+     *         response=200,
+     *         description="Returned when a list of users is returned successfully",
+     *         @Doc\Model(type=User::class)
+     *     ),
+     *     @SWG\Response(
+     *         response="401",
+     *         description="Returned when the JWT Token is expired or invalid"
+     *     )
+     * )
      */
     public function showUsersList(ParamFetcher $paramFetcher)
     {
@@ -79,6 +95,26 @@ class ClientController extends AbstractFOSRestController
      *      name = "show_user_details",
      * )
      * @View(serializerGroups={"detail"})
+     * 
+     * @Doc\Operation(
+     *     tags={"Users"},
+     *     summary="Get a specific user",
+     *     @SWG\Parameter(
+     *         name="id",
+     *         in="path",
+     *         type="integer",
+     *         description="The user unique identifier"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="Returned when a user is returned successfully",
+     *         @Doc\Model(type=User::class)
+     *     ),
+     *     @SWG\Response(
+     *         response="401",
+     *         description="Returned when the JWT Token is expired or invalid"
+     *     )
+     * )
      */
     public function showUser(User $user)
     {
@@ -91,6 +127,20 @@ class ClientController extends AbstractFOSRestController
     *            name = "create_user")
     * @Rest\View
     * @ParamConverter("user", converter="fos_rest.request_body")
+    *
+    * @Doc\Operation(
+    *     tags={"Users"},
+    *     summary="Create a new user",
+    *     @SWG\Response(
+    *         response=201,
+    *         description="Returned when a user is created successfully",
+    *         @Doc\Model(type=User::class)
+    *     ),
+    *     @SWG\Response(
+    *         response="401",
+    *         description="Returned when the JWT Token is expired or invalid"
+    *     )
+    * )
     */
     public function addUSer(User $user, ConstraintViolationList $violations)
     {
@@ -121,6 +171,26 @@ class ClientController extends AbstractFOSRestController
      *     statusCode = 204
      *     )
      * @ParamConverter("user", converter="fos_rest.request_body")
+     * 
+     * @Doc\Operation(
+     *     tags={"Users"},
+     *     summary="Delete a specific user",
+     *     @SWG\Parameter(
+     *         name="id",
+     *         in="path",
+     *         type="integer",
+     *         description="The user unique identifier"
+     *     ),
+     *     @SWG\Response(
+     *         response=204,
+     *         description="Returned when user deleted succssefully",
+     *         @Doc\Model(type=User::class)
+     *     ),
+     *     @SWG\Response(
+     *         response="401",
+     *         description="Returned when the JWT Token is expired or invalid"
+     *     )
+     * )
      */
     public function deleteUSer(User $user)
     {

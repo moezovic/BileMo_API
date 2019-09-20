@@ -9,6 +9,8 @@ use App\Entity\MobilePhone;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\View;
+use Nelmio\ApiDocBundle\Annotation as Doc;
+use Swagger\Annotations as SWG;
 use Symfony\Component\Validator\Constraints;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Request\ParamFetcher;
@@ -24,6 +26,26 @@ class MobilePhoneController extends AbstractFOSRestController
      *      name = "show_product_details"
      * )
      * @View(serializerGroups={"detail"})
+     * 
+     * @Doc\Operation(
+     *     tags={"Products"},
+     *     summary="Get the details of a specific mobile phone",
+     *     @SWG\Parameter(
+     *         name="id",
+     *         in="path",
+     *         type="integer",
+     *         description="The product unique identifier"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="Returned when successful",
+     *         @Doc\Model(type=MobilePhone::class)
+     *     ),
+     *     @SWG\Response(
+     *         response="401",
+     *         description="Returned when the JWT Token is expired or invalid"
+     *     )
+     * )
      */
     public function showProduct(MobilePhone $product)
     {
@@ -60,6 +82,20 @@ class MobilePhoneController extends AbstractFOSRestController
      *     description="The pagination offset"
      * )
      * @View()
+     * 
+     * @Doc\Operation(
+     *     tags={"Products"},
+     *     summary="Get the list of all mobile phones.",
+     *     @SWG\Response(
+     *         response=200,
+     *         description="Returned when the list is recovered successfully",
+     *         @Doc\Model(type=MobilePhone::class)
+     *     ),
+     *     @SWG\Response(
+     *         response="401",
+     *         description="Returned when the JWT Token is expired or invalid"
+     *     )
+     * )
      */
     public function listProducts(ParamFetcher $paramFetcher)
     {   
