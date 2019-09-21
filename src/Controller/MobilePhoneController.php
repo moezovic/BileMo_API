@@ -81,7 +81,7 @@ class MobilePhoneController extends AbstractFOSRestController
      *     default="0",
      *     description="The pagination offset"
      * )
-     * @View()
+     * @View(serializerGroups={"list"})
      * 
      * @Doc\Operation(
      *     tags={"Products"},
@@ -106,7 +106,6 @@ class MobilePhoneController extends AbstractFOSRestController
             $paramFetcher->get('limit'),
             $paramFetcher->get('offset')
         );
-
         return new Phones($pager);
 
     }

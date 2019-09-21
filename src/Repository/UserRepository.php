@@ -19,10 +19,12 @@ class UserRepository extends AbstractRepository
         parent::__construct($registry, User::class);
     }
 
-    public function findUsers($product, $order = 'asc', $limit = 10, $offset = 0)
+    public function findUsersByClient($product, $order = 'asc', $limit = 10, $offset = 0, $clientId)
     {
         $qb = $this
             ->createQueryBuilder('u')
+            ->andWhere('u.client > :clientId')
+            ->setParameter('clientId', $clientId)
             ->orderBy('u.lastName', $order)
         ;
         

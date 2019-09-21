@@ -101,7 +101,7 @@ class MobilePhone
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="phoneChoice")
      * 
      * @Serializer\Since("1.0")
-     * @Serializer\Groups({"detail"})
+     * @Serializer\Groups({"private"})
      */
     private $user;
 

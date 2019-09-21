@@ -20,15 +20,18 @@ use App\Representation\Users;
 use Symfony\Component\Validator\ConstraintViolationList;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 
 class ClientController extends AbstractFOSRestController
 {
     private $em;
+    private $loggedInId;
 
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
+        $loggedInId = $this->getUser()->getId();
     }
 
     /**
@@ -78,11 +81,13 @@ class ClientController extends AbstractFOSRestController
      */
     public function showUsersList(ParamFetcher $paramFetcher)
     {
-        $pager = $this->getDoctrine()->getRepository(User::class)->findUsers(
+
+        $pager = $this->getDoctrine()->getRepository(User::class)->findUsersByClient(
             $paramFetcher->get('product'),
             $paramFetcher->get('order'),
             $paramFetcher->get('limit'),
-            $paramFetcher->get('offset')
+            $paramFetcher->get('offset'),
+            $loggedInId
         );
 
         return new Users($pager);
@@ -118,6 +123,14 @@ class ClientController extends AbstractFOSRestController
      */
     public function showUser(User $user)
     {
+        $userClientId = $user->getClient()->getId();
+
+        if(null == $user){
+            // throw not found Exception
+        }
+        if($userClientId !== $loggedInId){
+            // throw not allowed exception
+        }
         return $user;
     }
 
@@ -147,7 +160,7 @@ class ClientController extends AbstractFOSRestController
         if (count($violations)) {
             return $this->view($violations, Response::HTTP_BAD_REQUEST);
         }
-        
+        $user->setClient($this->getDoctrine()->getRepository(Client::class)->findbyId($loggedInId));
         $this->em->persist($user);
         $this->em->flush();
 
@@ -194,9 +207,11 @@ class ClientController extends AbstractFOSRestController
      */
     public function deleteUSer(User $user)
     {
-        dump($user); die;
         if(null == $user){
-            // throw customized Exception
+            // throw not found Exception
+        }
+        if($userClientId !== $loggedInId){
+            // throw not allowed exception
         }
         $this->em->remove($user);
         $this->em->flush();
