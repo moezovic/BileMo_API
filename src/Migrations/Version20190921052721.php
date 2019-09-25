@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20190906171143 extends AbstractMigration
+final class Version20190921052721 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -22,7 +22,7 @@ final class Version20190906171143 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('CREATE TABLE mobile_phone (id INT AUTO_INCREMENT NOT NULL, model VARCHAR(55) NOT NULL, brand VARCHAR(55) NOT NULL, color VARCHAR(55) NOT NULL, storage INT NOT NULL, price NUMERIC(6, 2) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
+        $this->addSql('ALTER TABLE user DROP INDEX UNIQ_8D93D64919EB6921, ADD INDEX IDX_8D93D64919EB6921 (client_id)');
     }
 
     public function down(Schema $schema) : void
@@ -30,6 +30,6 @@ final class Version20190906171143 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('DROP TABLE mobile_phone');
+        $this->addSql('ALTER TABLE user DROP INDEX IDX_8D93D64919EB6921, ADD UNIQUE INDEX UNIQ_8D93D64919EB6921 (client_id)');
     }
 }

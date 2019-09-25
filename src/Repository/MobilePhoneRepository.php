@@ -2,8 +2,8 @@
 
 namespace App\Repository;
 
+use App\Repository\AbstractRepository;
 use App\Entity\MobilePhone;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
@@ -12,39 +12,29 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  * @method MobilePhone[]    findAll()
  * @method MobilePhone[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class MobilePhoneRepository extends ServiceEntityRepository
+class MobilePhoneRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, MobilePhone::class);
     }
 
-    // /**
-    //  * @return MobilePhone[] Returns an array of MobilePhone objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('m')
-            ->andWhere('m.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('m.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?MobilePhone
+    public function findProducts($user, $order = 'asc', $limit = 10, $offset = 0)
     {
-        return $this->createQueryBuilder('m')
-            ->andWhere('m.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
+        $qb = $this
+            ->createQueryBuilder('p')
+            ->orderBy('p.brand', $order)
         ;
+        
+        if ($user) {
+            $qb
+                ->where('p.user = :user')
+                ->setParameter(user, $this->getUser()->getId())
+            ;
+        }
+        
+        return $this->paginate($qb, $limit, $offset);
     }
-    */
+
 }
