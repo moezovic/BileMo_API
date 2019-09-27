@@ -100,13 +100,13 @@ class MobilePhoneController extends AbstractFOSRestController
     public function listProducts(ParamFetcher $paramFetcher)
     {   
 
-        $pager = $this->getDoctrine()->getRepository(MobilePhone::class)->findProducts(
-            $paramFetcher->get('user'),
+        $list = $this->getDoctrine()->getRepository(MobilePhone::class)->findProducts(
             $paramFetcher->get('order'),
             $paramFetcher->get('limit'),
             $paramFetcher->get('offset')
         );
-        return new Phones($pager);
+        
+        return $list;
 
     }
 }

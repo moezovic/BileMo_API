@@ -9,7 +9,10 @@ fos_rest:
             json: ['application/json', 'application/json;version=1.0']
         formats: { json: true, xml: false, rss: false }
         view_response_listener: true
-
+    exception:
+        enabled: true
+        codes:
+           { App\Exception\ResourceValidationException: 400 }
     serializer:
         serialize_null: true
     format_listener:
