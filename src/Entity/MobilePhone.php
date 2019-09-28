@@ -105,6 +105,26 @@ class MobilePhone
      */
     private $user;
 
+    /**
+     * @ORM\Column(type="decimal", precision=4, scale=2)
+     */
+    private $height;
+
+    /**
+     * @ORM\Column(type="decimal", precision=3, scale=2)
+     */
+    private $width;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $screenResolution;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $weight;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -178,6 +198,54 @@ class MobilePhone
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getHeight(): ?string
+    {
+        return $this->height;
+    }
+
+    public function setHeight(string $height): self
+    {
+        $this->height = $height;
+
+        return $this;
+    }
+
+    public function getWidth(): ?string
+    {
+        return $this->width;
+    }
+
+    public function setWidth(string $width): self
+    {
+        $this->width = $width;
+
+        return $this;
+    }
+
+    public function getScreenResolution(): ?int
+    {
+        return $this->screenResolution;
+    }
+
+    public function setScreenResolution(int $screenResolution): self
+    {
+        $this->screenResolution = $screenResolution;
+
+        return $this;
+    }
+
+    public function getWeight(): ?int
+    {
+        return $this->weight;
+    }
+
+    public function setWeight(int $weight): self
+    {
+        $this->weight = $weight;
 
         return $this;
     }

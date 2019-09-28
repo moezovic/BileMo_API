@@ -16,6 +16,7 @@ use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Request\ParamFetcher;
 use App\Representation\Phones;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 
 
 class MobilePhoneController extends AbstractFOSRestController
@@ -46,9 +47,11 @@ class MobilePhoneController extends AbstractFOSRestController
      *         description="Returned when the JWT Token is expired or invalid"
      *     )
      * )
+     * @Cache(smaxage="21600", mustRevalidate=true)
      */
     public function showProduct(MobilePhone $product)
     {
+
         return $product;
     }
 
@@ -96,6 +99,7 @@ class MobilePhoneController extends AbstractFOSRestController
      *         description="Returned when the JWT Token is expired or invalid"
      *     )
      * )
+     * @Cache(smaxage="21600", mustRevalidate=true)
      */
     public function listProducts(ParamFetcher $paramFetcher)
     {   

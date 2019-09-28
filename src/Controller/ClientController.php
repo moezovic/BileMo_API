@@ -22,6 +22,7 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Exception\ResourceValidationException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 
 
 class ClientController extends AbstractFOSRestController
@@ -77,6 +78,7 @@ class ClientController extends AbstractFOSRestController
      *         description="Returned when the JWT Token is expired or invalid"
      *     )
      * )
+     * @Cache(smaxage="21600", mustRevalidate=true)
      */
     public function showUsersList(ParamFetcher $paramFetcher)
     {
@@ -119,6 +121,7 @@ class ClientController extends AbstractFOSRestController
      *         description="Returned when the JWT Token is expired or invalid"
      *     )
      * )
+     * @Cache(smaxage="21600", mustRevalidate=true)
      */
     public function showUser(User $user)
     {
