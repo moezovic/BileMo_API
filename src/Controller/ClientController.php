@@ -21,18 +21,18 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Exception\ResourceValidationException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 
 
 class ClientController extends AbstractFOSRestController
 {
     private $em;
-    private $loggedInId;
 
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
-        $loggedInId = $this->getUser()->getId();
-    }
+        }
 
     /**
      * @Get(
@@ -78,19 +78,20 @@ class ClientController extends AbstractFOSRestController
      *         description="Returned when the JWT Token is expired or invalid"
      *     )
      * )
+     * @Cache(smaxage="21600", mustRevalidate=true)
      */
     public function showUsersList(ParamFetcher $paramFetcher)
     {
 
-        $pager = $this->getDoctrine()->getRepository(User::class)->findUsersByClient(
+        $list = $this->getDoctrine()->getRepository(User::class)->findUsersByClient(
             $paramFetcher->get('product'),
             $paramFetcher->get('order'),
             $paramFetcher->get('limit'),
             $paramFetcher->get('offset'),
-            $loggedInId
+            $this->getUser()->getId()
         );
 
-        return new Users($pager);
+        return $list;
 
     }
 
@@ -120,6 +121,7 @@ class ClientController extends AbstractFOSRestController
      *         description="Returned when the JWT Token is expired or invalid"
      *     )
      * )
+     * @Cache(smaxage="21600", mustRevalidate=true)
      */
     public function showUser(User $user)
     {
@@ -128,7 +130,7 @@ class ClientController extends AbstractFOSRestController
         if(null == $user){
             // throw not found Exception
         }
-        if($userClientId !== $loggedInId){
+        if($userClientId !== $this->getUser()->getId()){
             // throw not allowed exception
         }
         return $user;
@@ -158,9 +160,15 @@ class ClientController extends AbstractFOSRestController
     public function addUSer(User $user, ConstraintViolationList $violations)
     {
         if (count($violations)) {
-            return $this->view($violations, Response::HTTP_BAD_REQUEST);
+            $message = 'The JSON sent contains invalid data. Here are the errors you need to correct: ';
+            foreach ($violations as $violation) {
+                $message .= sprintf("Field %s: %s ", $violation->getPropertyPath(), $violation->getMessage());
+            }
+
+            throw new ResourceValidationException($message);
         }
-        $user->setClient($this->getDoctrine()->getRepository(Client::class)->findbyId($loggedInId));
+
+        $user->setClient($this->getDoctrine()->getRepository(Client::class)->findbyId($this->getUser()->getId()));
         $this->em->persist($user);
         $this->em->flush();
 
@@ -210,7 +218,7 @@ class ClientController extends AbstractFOSRestController
         if(null == $user){
             // throw not found Exception
         }
-        if($userClientId !== $loggedInId){
+        if($userClientId !== $this->getUser()->getId()){
             // throw not allowed exception
         }
         $this->em->remove($user);

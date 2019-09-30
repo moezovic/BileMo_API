@@ -23,7 +23,8 @@ class UserRepository extends AbstractRepository
     {
         $qb = $this
             ->createQueryBuilder('u')
-            ->andWhere('u.client > :clientId')
+            ->join("u.client", "c")
+            ->andWhere('c.id = :clientId')
             ->setParameter('clientId', $clientId)
             ->orderBy('u.lastName', $order)
         ;

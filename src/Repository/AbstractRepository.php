@@ -4,8 +4,6 @@ namespace App\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use Pagerfanta\Pagerfanta;
-use Pagerfanta\Adapter\DoctrineORMAdapter;
 
 abstract class AbstractRepository extends ServiceEntityRepository
 {
@@ -14,10 +12,10 @@ abstract class AbstractRepository extends ServiceEntityRepository
         if (0 == $limit) {
             throw new \LogicException('$limit must be greater than 0.');
         }
-        $pager = new Pagerfanta(new DoctrineORMAdapter($qb));
-        $currentPage = ceil(($offset + 1) / $limit);
-        $pager->setCurrentPage($currentPage);
-        $pager->setMaxPerPage((int) $limit);
-        return $pager;
+        if (($limit -  $offset) > 20) {
+            throw new \LogicException('Le nombre maximum d\'élements retourner par requête est limité à 20.');
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }
