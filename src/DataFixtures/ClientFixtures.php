@@ -23,7 +23,7 @@ class ClientFixtures extends Fixture
         $faker = Faker\Factory::create('fr_FR');
         for($i = 0; $i<3; $i++){
             $client = new Client();
-            $client->setEmail("client_".$i."@gamil.com");
+            $client->setEmail("client_".$i."@gmail.com");
             $client->setPassword($this->passwordEncoder->encodePassword($client, "client_".$i));
             for($ii = 0; $ii<10; $ii++)
             {
