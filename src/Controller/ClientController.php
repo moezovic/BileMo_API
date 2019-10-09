@@ -7,7 +7,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use App\Entity\User;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use  FOS\RestBundle\Controller\Annotations\Get;
+use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\View;
 use Nelmio\ApiDocBundle\Annotation as Doc;
 use Swagger\Annotations as SWG;
@@ -63,7 +63,7 @@ class ClientController extends AbstractFOSRestController
      *     default="0",
      *     description="The pagination offset"
      * )
-     * @View()
+     * @View(serializerGroups={"list"})
      * 
      * @Doc\Operation(
      *     tags={"Users"},
@@ -78,11 +78,9 @@ class ClientController extends AbstractFOSRestController
      *         description="Returned when the JWT Token is expired or invalid"
      *     )
      * )
-     * @Cache(smaxage="21600", mustRevalidate=true)
      */
     public function showUsersList(ParamFetcher $paramFetcher)
     {
-
         $list = $this->getDoctrine()->getRepository(User::class)->findUsersByClient(
             $paramFetcher->get('product'),
             $paramFetcher->get('order'),
@@ -121,7 +119,7 @@ class ClientController extends AbstractFOSRestController
      *         description="Returned when the JWT Token is expired or invalid"
      *     )
      * )
-     * @Cache(smaxage="21600", mustRevalidate=true)
+     * @Cache(smaxage="3600", mustRevalidate=true)
      */
     public function showUser(User $user)
     {
@@ -137,6 +135,7 @@ class ClientController extends AbstractFOSRestController
     }
 
    /** 
+    * 
     * @Rest\Post(
     *            Path = "/api/users",
     *            name = "create_user")
@@ -168,17 +167,11 @@ class ClientController extends AbstractFOSRestController
             throw new ResourceValidationException($message);
         }
 
-        $user->setClient($this->getDoctrine()->getRepository(Client::class)->findbyId($this->getUser()->getId()));
+        $user->setClient($this->getUser());
         $this->em->persist($user);
         $this->em->flush();
 
-        return $this->view(
-            $article,
-            Response::HTTP_CREATED,
-            [
-                'location' => $this->generateUrl('show_user', ['id' => $article->getId(), UrlGeneratorInterface::ABSOLUTE_URL])
-            ]
-            );
+        return $user;
     }
 
     /**
@@ -191,7 +184,6 @@ class ClientController extends AbstractFOSRestController
      *     populateDefaultVars = false,
      *     statusCode = 204
      *     )
-     * @ParamConverter("user", converter="fos_rest.request_body")
      * 
      * @Doc\Operation(
      *     tags={"Users"},
@@ -215,12 +207,12 @@ class ClientController extends AbstractFOSRestController
      */
     public function deleteUSer(User $user)
     {
-        if(null == $user){
-            // throw not found Exception
-        }
-        if($userClientId !== $this->getUser()->getId()){
-            // throw not allowed exception
-        }
+        // if(null == $user){
+        //     // throw not found Exception
+        // }
+        // if($userClientId !== $this->getUser()->getId()){
+        //     // throw not allowed exception
+        // }
         $this->em->remove($user);
         $this->em->flush();
 

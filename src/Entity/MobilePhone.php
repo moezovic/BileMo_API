@@ -19,19 +19,22 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *          "show_product_details",
  *          parameters = { "id" = "expr(object.getId())" },
  *          absolute = true
- *      )
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups = {"list","detail"})
  * )
   * @Hateoas\Relation(
  *      "read_all",
  *      href = @Hateoas\Route(
  *          "show_products_list",
  *          absolute = true
- *      )
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups = {"list","detail"})
  * )
  * 
  * @Hateoas\Relation(
  *     "user",
- *     embedded = @Hateoas\Embedded("expr(object.getUser())")
+ *     embedded = @Hateoas\Embedded("expr(object.getUser())"),
+ *     exclusion = @Hateoas\Exclusion(groups = {"detail"})
  * )
  */
 class MobilePhone
@@ -107,21 +110,28 @@ class MobilePhone
 
     /**
      * @ORM\Column(type="decimal", precision=4, scale=2)
+     * @Serializer\Groups({"detail"})
+     * @Serializer\Since("1.0")
      */
     private $height;
 
     /**
      * @ORM\Column(type="decimal", precision=3, scale=2)
+     * @Serializer\Groups({"detail"})
+     * @Serializer\Since("1.0")
      */
     private $width;
 
     /**
      * @ORM\Column(type="integer")
+     * @Serializer\Since("1.0")
      */
     private $screenResolution;
 
     /**
      * @ORM\Column(type="integer")
+     * @Serializer\Groups({"detail"})
+     * @Serializer\Since("1.0")
      */
     private $weight;
 

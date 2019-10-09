@@ -7,9 +7,11 @@ use Doctrine\Common\Persistence\ObjectManager;
 use App\Entity\MobilePhone;
 
 class ProductFixtures extends Fixture
-{
+{   
+    public const PRODUCT_REFERENCE = 'sample';
+
     public function load(ObjectManager $manager)
-    {
+    {   
         // Generate phone objects randomly
         $bulkPhoneData = [
             'model' => ['I','II', 'III', 'IV'],
@@ -59,5 +61,6 @@ class ProductFixtures extends Fixture
         }
 
         $manager->flush();
+        $this->addReference(self::PRODUCT_REFERENCE, $phone);
     }
 }
