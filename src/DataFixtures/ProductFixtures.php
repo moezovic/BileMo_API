@@ -61,6 +61,7 @@ class ProductFixtures extends Fixture
         }
 
         $manager->flush();
+        // make a reference to phone object to be used in other fixture file
         $this->addReference(self::PRODUCT_REFERENCE, $phone);
     }
 }

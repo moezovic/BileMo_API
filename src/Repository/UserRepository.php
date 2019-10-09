@@ -26,12 +26,15 @@ class UserRepository extends AbstractRepository
             ->join("u.client", "c")
             ->andWhere('c.id = :clientId')
             ->setParameter('clientId', $clientId)
-            ->orderBy('u.lastName', $order)
+            ->orderBy('u.id', $order)
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
         ;
         
         if ($product) {
             $qb
-                ->where('u.phonechoice = :product')
+                ->join("u.phoneChoice", "p")
+                ->andWhere('p.id= :product')
                 ->setParameter('product', $product)
             ;
         }

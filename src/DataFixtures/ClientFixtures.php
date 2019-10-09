@@ -57,7 +57,7 @@ class ClientFixtures extends Fixture implements DependentFixtureInterface
 
        return $phone;
    }
-
+ // Require loading the fixture below before the curent fixture is loaded
    public function getDependencies()
     {
         return array(

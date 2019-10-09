@@ -51,7 +51,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
  * @Hateoas\Relation(
  *     "phone_choice",
  *     embedded = @Hateoas\Embedded("expr(object.getPhoneChoice())"),
- *     exclusion = @Hateoas\Exclusion(groups = {"list","detail","private"})
+ *     exclusion = @Hateoas\Exclusion(groups = {"list","detail"}, excludeIf = "expr(object.getPhoneChoice() === null)")
  * )
  */
 class User
