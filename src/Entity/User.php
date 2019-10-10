@@ -92,7 +92,7 @@ class User
      * @ORM\Column(type="integer")
      * 
      * @Assert\NotBlank
-     * @Assert\Regex("/^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/")
+     * @Assert\Regex("/^[1-9](\d{2}){4}$/")
      * 
      * @JMS\Serializer\Annotation\Type("string")
      * @Serializer\Since("1.0")
@@ -119,7 +119,6 @@ class User
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\MobilePhone", mappedBy="user", cascade={"persist"})
-     * 
      * @Serializer\Since("1.0")
      */
     private $phoneChoice;

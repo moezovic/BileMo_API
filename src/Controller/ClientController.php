@@ -6,11 +6,14 @@ namespace App\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 
 use App\Entity\User;
+use App\Entity\MobilePhone;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\View;
 use Nelmio\ApiDocBundle\Annotation as Doc;
 use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,6 +26,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Exception\ResourceValidationException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
 
 
 class ClientController extends AbstractFOSRestController
@@ -71,7 +77,7 @@ class ClientController extends AbstractFOSRestController
      *     @SWG\Response(
      *         response=200,
      *         description="Returned when a list of users is returned successfully",
-     *         @Doc\Model(type=User::class)
+     *         @Model(type=User::class, groups={"list"})
      *     ),
      *     @SWG\Response(
      *         response="401",
@@ -112,7 +118,7 @@ class ClientController extends AbstractFOSRestController
      *     @SWG\Response(
      *         response=200,
      *         description="Returned when a user is returned successfully",
-     *         @Doc\Model(type=User::class)
+     *         @Model(type=User::class, groups={"detail"})
      *     ),
      *     @SWG\Response(
      *         response="401",
@@ -140,15 +146,14 @@ class ClientController extends AbstractFOSRestController
     *            Path = "/api/users",
     *            name = "create_user")
     * @Rest\View
-    * @ParamConverter("user", converter="fos_rest.request_body")
     *
     * @Doc\Operation(
     *     tags={"Users"},
     *     summary="Create a new user",
     *     @SWG\Response(
     *         response=201,
+    *         @Model(type=User::class),
     *         description="Returned when a user is created successfully",
-    *         @Doc\Model(type=User::class)
     *     ),
     *     @SWG\Response(
     *         response="401",
@@ -156,12 +161,27 @@ class ClientController extends AbstractFOSRestController
     *     )
     * )
     */
-    public function addUSer(User $user, ConstraintViolationList $violations)
-    {
-        if (count($violations)) {
+    public function addUSer(Request $request, ValidatorInterface $validator)
+    {   
+        $phoneChoice = $this->getDoctrine()
+        ->getRepository(MobilePhone::class)
+        ->find($request->request->get('phone_choice'));
+        $user = new User();
+        $user->setFirstname($request->request->get('first_name'));
+        $user->setLastName($request->request->get('last_name'));
+        $user->setPhoneNumber($request->request->get('phone_number'));
+        $user->setAddress($request->request->get('address'));
+        $user->setClient($this->getUser());
+        $user->AddPhoneChoice($phoneChoice);
+
+        // Verify if received data are valid
+
+        $validationErrors = $validator->validate($user);
+
+        if (count($validationErrors)) {
             $message = 'The JSON sent contains invalid data. Here are the errors you need to correct: ';
-            foreach ($violations as $violation) {
-                $message .= sprintf("Field %s: %s ", $violation->getPropertyPath(), $violation->getMessage());
+            foreach ($validationErrors as $validationErrors) {
+                $message .= sprintf("Field %s: %s ", $validationErrors->getPropertyPath(), $validationErrors->getMessage());
             }
 
             throw new ResourceValidationException($message);
@@ -197,7 +217,6 @@ class ClientController extends AbstractFOSRestController
      *     @SWG\Response(
      *         response=204,
      *         description="Returned when user deleted succssefully",
-     *         @Doc\Model(type=User::class)
      *     ),
      *     @SWG\Response(
      *         response="401",

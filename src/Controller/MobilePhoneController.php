@@ -40,7 +40,7 @@ class MobilePhoneController extends AbstractFOSRestController
      *     @SWG\Response(
      *         response=200,
      *         description="Returned when successful",
-     *         @Doc\Model(type=MobilePhone::class)
+     *         @Doc\Model(type=MobilePhone::class,groups={"detail"})
      *     ),
      *     @SWG\Response(
      *         response="401",
@@ -90,7 +90,7 @@ class MobilePhoneController extends AbstractFOSRestController
      *     @SWG\Response(
      *         response=200,
      *         description="Returned when the list is recovered successfully",
-     *         @Doc\Model(type=MobilePhone::class)
+     *         @Doc\Model(type=MobilePhone::class,groups={"list"})
      *     ),
      *     @SWG\Response(
      *         response="401",
