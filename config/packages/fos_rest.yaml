@@ -10,9 +10,9 @@ fos_rest:
         formats: { json: true, xml: false, rss: false }
         view_response_listener: true
     exception:
-        enabled: false
+        enabled: true
         codes:
-           { App\Exception\ResourceValidationException: 400 }
+           { App\Exception\ResourceValidationException: 400}
     serializer:
         serialize_null: true
     format_listener:

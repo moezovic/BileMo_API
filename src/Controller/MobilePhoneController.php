@@ -47,6 +47,7 @@ class MobilePhoneController extends AbstractFOSRestController
      *         description="Returned when the JWT Token is expired or invalid"
      *     )
      * )
+     *  @Cache(expires="1800", public=true)
      */
     public function showProduct(MobilePhone $product)
     {
@@ -97,6 +98,7 @@ class MobilePhoneController extends AbstractFOSRestController
      *         description="Returned when the JWT Token is expired or invalid"
      *     )
      * )
+     *  @Cache(expires="1800", public=true)
      */
     public function listProducts(ParamFetcher $paramFetcher)
     {   

@@ -55,7 +55,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
  * )
  */
 class User
-{
+{   
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -122,6 +122,7 @@ class User
      * @Serializer\Since("1.0")
      */
     private $phoneChoice;
+
 
     public function __construct()
     {
@@ -223,4 +224,5 @@ class User
 
         return $this;
     }
+
 }
