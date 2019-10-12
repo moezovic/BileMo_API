@@ -40,18 +40,17 @@ class MobilePhoneController extends AbstractFOSRestController
      *     @SWG\Response(
      *         response=200,
      *         description="Returned when successful",
-     *         @Doc\Model(type=MobilePhone::class)
+     *         @Doc\Model(type=MobilePhone::class,groups={"detail"})
      *     ),
      *     @SWG\Response(
      *         response="401",
      *         description="Returned when the JWT Token is expired or invalid"
      *     )
      * )
-     * @Cache(smaxage="21600", mustRevalidate=true)
+     *  @Cache(expires="1800", public=true)
      */
     public function showProduct(MobilePhone $product)
     {
-
         return $product;
     }
 
@@ -92,14 +91,14 @@ class MobilePhoneController extends AbstractFOSRestController
      *     @SWG\Response(
      *         response=200,
      *         description="Returned when the list is recovered successfully",
-     *         @Doc\Model(type=MobilePhone::class)
+     *         @Doc\Model(type=MobilePhone::class,groups={"list"})
      *     ),
      *     @SWG\Response(
      *         response="401",
      *         description="Returned when the JWT Token is expired or invalid"
      *     )
      * )
-     * @Cache(smaxage="21600", mustRevalidate=true)
+     *  @Cache(expires="1800", public=true)
      */
     public function listProducts(ParamFetcher $paramFetcher)
     {   

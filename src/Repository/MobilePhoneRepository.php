@@ -24,7 +24,7 @@ class MobilePhoneRepository extends AbstractRepository
     {
         $qb = $this
             ->createQueryBuilder('p')
-            ->orderBy('p.brand', $order)
+            ->orderBy('p.id', $order)
             ->setFirstResult($offset)
             ->setMaxResults($limit)
         ;

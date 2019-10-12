@@ -12,7 +12,7 @@ abstract class AbstractRepository extends ServiceEntityRepository
         if (0 == $limit) {
             throw new \LogicException('$limit must be greater than 0.');
         }
-        if (($limit -  $offset) > 20) {
+        if (($limit) > 20) {
             throw new \LogicException('Le nombre maximum d\'élements retourner par requête est limité à 20.');
         }
 

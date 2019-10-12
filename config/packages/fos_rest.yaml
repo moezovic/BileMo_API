@@ -12,7 +12,7 @@ fos_rest:
     exception:
         enabled: true
         codes:
-           { App\Exception\ResourceValidationException: 400 }
+           { App\Exception\ResourceValidationException: 400}
     serializer:
         serialize_null: true
     format_listener:

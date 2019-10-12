@@ -6,11 +6,14 @@ namespace App\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 
 use App\Entity\User;
+use App\Entity\MobilePhone;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use  FOS\RestBundle\Controller\Annotations\Get;
+use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\View;
 use Nelmio\ApiDocBundle\Annotation as Doc;
 use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,8 +24,13 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Exception\NotFoundException;
+use App\Exception\NotAuthorizedException;
 use App\Exception\ResourceValidationException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
 
 
 class ClientController extends AbstractFOSRestController
@@ -63,7 +71,8 @@ class ClientController extends AbstractFOSRestController
      *     default="0",
      *     description="The pagination offset"
      * )
-     * @View()
+     * @View(StatusCode = 200,
+     *       serializerGroups={"list"})
      * 
      * @Doc\Operation(
      *     tags={"Users"},
@@ -71,18 +80,17 @@ class ClientController extends AbstractFOSRestController
      *     @SWG\Response(
      *         response=200,
      *         description="Returned when a list of users is returned successfully",
-     *         @Doc\Model(type=User::class)
+     *         @Model(type=User::class, groups={"list"})
      *     ),
      *     @SWG\Response(
      *         response="401",
      *         description="Returned when the JWT Token is expired or invalid"
      *     )
      * )
-     * @Cache(smaxage="21600", mustRevalidate=true)
+
      */
     public function showUsersList(ParamFetcher $paramFetcher)
-    {
-
+    {   
         $list = $this->getDoctrine()->getRepository(User::class)->findUsersByClient(
             $paramFetcher->get('product'),
             $paramFetcher->get('order'),
@@ -91,7 +99,7 @@ class ClientController extends AbstractFOSRestController
             $this->getUser()->getId()
         );
 
-        return $list;
+         return $list;
 
     }
 
@@ -100,7 +108,8 @@ class ClientController extends AbstractFOSRestController
      *      path = "/api/users/{id}",
      *      name = "show_user_details",
      * )
-     * @View(serializerGroups={"detail"})
+     * @View(StatusCode = 200,
+     *       serializerGroups={"detail"})
      * 
      * @Doc\Operation(
      *     tags={"Users"},
@@ -114,42 +123,43 @@ class ClientController extends AbstractFOSRestController
      *     @SWG\Response(
      *         response=200,
      *         description="Returned when a user is returned successfully",
-     *         @Doc\Model(type=User::class)
+     *         @Model(type=User::class, groups={"detail"})
      *     ),
      *     @SWG\Response(
      *         response="401",
      *         description="Returned when the JWT Token is expired or invalid"
      *     )
      * )
-     * @Cache(smaxage="21600", mustRevalidate=true)
+     * @Cache(smaxage="1800", mustRevalidate=true)
      */
     public function showUser(User $user)
     {
-        $userClientId = $user->getClient()->getId();
-
-        if(null == $user){
-            // throw not found Exception
+;        if(null === $user){
+            throw new NotFoundHttpException('The id used does not refer to any user');
         }
+        // Get user's associated client id
+        $userClientId = $user->getClient()->getId();
+        // check if the recovered client id correspond to connected client id
         if($userClientId !== $this->getUser()->getId()){
-            // throw not allowed exception
+            throw new NotAuthorizedException('You are not authorized to access this data');
         }
         return $user;
     }
 
    /** 
+    * 
     * @Rest\Post(
     *            Path = "/api/users",
     *            name = "create_user")
-    * @Rest\View
-    * @ParamConverter("user", converter="fos_rest.request_body")
+    * @Rest\View(StatusCode = 201)
     *
     * @Doc\Operation(
     *     tags={"Users"},
     *     summary="Create a new user",
     *     @SWG\Response(
     *         response=201,
+    *         @Model(type=User::class),
     *         description="Returned when a user is created successfully",
-    *         @Doc\Model(type=User::class)
     *     ),
     *     @SWG\Response(
     *         response="401",
@@ -157,28 +167,48 @@ class ClientController extends AbstractFOSRestController
     *     )
     * )
     */
-    public function addUSer(User $user, ConstraintViolationList $violations)
-    {
-        if (count($violations)) {
-            $message = 'The JSON sent contains invalid data. Here are the errors you need to correct: ';
-            foreach ($violations as $violation) {
-                $message .= sprintf("Field %s: %s ", $violation->getPropertyPath(), $violation->getMessage());
-            }
+    public function addUSer(Request $request, ValidatorInterface $validator)
+    {   
+        // verify the validity of mobile phone choice
+        $phoneChoice = $this->getDoctrine()
+            ->getRepository(MobilePhone::class)
+            ->find($request->request->get('phone_choice'));
 
-            throw new ResourceValidationException($message);
+        if($phoneChoice == null){
+            throw new notFoundException('The user\'s phone choice is not valid');
         }
 
-        $user->setClient($this->getDoctrine()->getRepository(Client::class)->findbyId($this->getUser()->getId()));
+        $user = new User();
+
+        try {
+            $user->setFirstname($request->request->get('first_name'));
+            $user->setLastName($request->request->get('last_name'));
+            $user->setPhoneNumber($request->request->get('phone_number'));
+            $user->setAddress($request->request->get('address'));
+            $user->setClient($this->getUser());
+            $user->AddPhoneChoice($phoneChoice);
+        } catch (\Throwable $th) {
+            throw new ResourceValidationException("User's sent data contains errors");
+            
+        }
+
+        // Verify if received the new user's data ara valid
+        // $validationErrors = $validator->validate($user);
+
+        // if (count($validationErrors)) {
+        //     $message = 'The JSON sent contains invalid data. Here are the errors you need to correct: ';
+        //     foreach ($validationErrors as $error) {
+        //         $message .= sprintf("Field %s: %s ", $validationErrors->getPropertyPath(), $validationErrors->getMessage());
+        //     }
+
+        //     throw new ResourceValidationException($message);
+        // }
+
+        $user->setClient($this->getUser());
         $this->em->persist($user);
         $this->em->flush();
 
-        return $this->view(
-            $article,
-            Response::HTTP_CREATED,
-            [
-                'location' => $this->generateUrl('show_user', ['id' => $article->getId(), UrlGeneratorInterface::ABSOLUTE_URL])
-            ]
-            );
+        return $user;
     }
 
     /**
@@ -191,7 +221,6 @@ class ClientController extends AbstractFOSRestController
      *     populateDefaultVars = false,
      *     statusCode = 204
      *     )
-     * @ParamConverter("user", converter="fos_rest.request_body")
      * 
      * @Doc\Operation(
      *     tags={"Users"},
@@ -205,7 +234,6 @@ class ClientController extends AbstractFOSRestController
      *     @SWG\Response(
      *         response=204,
      *         description="Returned when user deleted succssefully",
-     *         @Doc\Model(type=User::class)
      *     ),
      *     @SWG\Response(
      *         response="401",
@@ -216,10 +244,13 @@ class ClientController extends AbstractFOSRestController
     public function deleteUSer(User $user)
     {
         if(null == $user){
-            // throw not found Exception
+            throw new NotFoundHttpException('The id used does not refer to any user');
         }
+        // Get user's associated client id
+        $userClientId = $user->getClient()->getId();
+        // check if the recovered client id correspond to connected client id
         if($userClientId !== $this->getUser()->getId()){
-            // throw not allowed exception
+            throw new NotAuthorizedException('You are not authorized to access this data');
         }
         $this->em->remove($user);
         $this->em->flush();

@@ -1,0 +1,10 @@
+fos_http_cache:
+    invalidation:
+        rules:
+            -
+                match:
+                    attributes:
+                        _route: "create_user|delete_user"
+                routes:
+                    show_user_details: ~  
+                    show_users_list: ~  

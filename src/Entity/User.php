@@ -19,21 +19,24 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *          "show_user_details",
  *          parameters = { "id" = "expr(object.getId())" },
  *          absolute = true
- *      )
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups = {"list","detail"})
  * )
   * @Hateoas\Relation(
  *      "read_all",
  *      href = @Hateoas\Route(
  *          "show_users_list",
  *          absolute = true
- *      )
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups = {"list","detail"})
  * )
  * @Hateoas\Relation(
  *      "create",
  *      href = @Hateoas\Route(
  *          "create_user",
  *          absolute = true
- *      )
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups = {"list","detail"})
  * )
  * @Hateoas\Relation(
  *      "delete",
@@ -41,16 +44,18 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *          "delete_user",
  *          parameters = { "id" = "expr(object.getId())" },
  *          absolute = true
- *      )
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups = {"list","detail"})
  * )
  * 
  * @Hateoas\Relation(
  *     "phone_choice",
- *     embedded = @Hateoas\Embedded("expr(object.getPhoneChoice())")
+ *     embedded = @Hateoas\Embedded("expr(object.getPhoneChoice())"),
+ *     exclusion = @Hateoas\Exclusion(groups = {"list","detail"}, excludeIf = "expr(object.getPhoneChoice() === null)")
  * )
  */
 class User
-{
+{   
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -66,6 +71,7 @@ class User
      * 
      * @Assert\NotBlank
      * 
+     * @JMS\Serializer\Annotation\Type("string")
      * @Serializer\Since("1.0")
      * @Serializer\Groups({"list", "detail"})
      */
@@ -76,6 +82,7 @@ class User
      * 
      * @Assert\NotBlank
      * 
+     * @JMS\Serializer\Annotation\Type("string")
      * @Serializer\Since("1.0")
      * @Serializer\Groups({"list", "detail"})
      */
@@ -85,8 +92,9 @@ class User
      * @ORM\Column(type="integer")
      * 
      * @Assert\NotBlank
-     * @Assert\Regex("/^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/")
+     * @Assert\Regex("/^[1-9](\d{2}){4}$/")
      * 
+     * @JMS\Serializer\Annotation\Type("string")
      * @Serializer\Since("1.0")
      * @Serializer\Groups({"detail"})
      */
@@ -97,6 +105,7 @@ class User
      * 
      * @Assert\NotBlank
      * 
+     * @JMS\Serializer\Annotation\Type("string")
      * @Serializer\Since("1.0")
      * @Serializer\Groups({"detail"})
      */
@@ -110,11 +119,10 @@ class User
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\MobilePhone", mappedBy="user", cascade={"persist"})
-     * 
      * @Serializer\Since("1.0")
-     * @Serializer\Groups({"detail"})
      */
     private $phoneChoice;
+
 
     public function __construct()
     {
@@ -216,4 +224,5 @@ class User
 
         return $this;
     }
+
 }
