@@ -2,21 +2,26 @@
 fos_rest:
     body_converter:
         enabled: true
+        # Active le mecanisme de validation des ressources de FRest
         validate: true
         validation_errors_argument: violations
     view:
         mime_types:
             json: ['application/json', 'application/json;version=1.0']
         formats: { json: true, xml: false, rss: false }
+        # dire à FOSRest de recuperer l'objet retourné et faire la serialisation à notre place
         view_response_listener: true
     exception:
         enabled: true
         codes:
            { App\Exception\ResourceValidationException: 400}
+        messages:
+           { App\Exception\ResourceValidationException: true }
     serializer:
         serialize_null: true
     format_listener:
         rules:
+        # pour les routes commencant par /, les objets retournés en reponse devront etre serialisé en json
             - { path: '^/', priorities: ['json'], fallback_format: 'json' }
     param_fetcher_listener: true
     versioning:

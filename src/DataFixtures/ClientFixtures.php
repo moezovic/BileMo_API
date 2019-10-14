@@ -35,7 +35,7 @@ class ClientFixtures extends Fixture implements DependentFixtureInterface
                 $user->setPhoneNumber($this->randomPhoneNumber($faker));
                 $user->setAddress($faker->streetAddress );
                 $user->setClient($client);
-                $user->addPhoneChoice($this->getReference(ProductFixtures::PRODUCT_REFERENCE));
+                $user->addPhoneChoice($this->getReference("product_" . ($ii +($i*10))));
                 $manager->persist($user);
             }
             $manager->persist($client);
