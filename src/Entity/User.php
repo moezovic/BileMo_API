@@ -112,13 +112,13 @@ class User
     private $address;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Client", inversedBy="user", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Client", inversedBy="user", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $client;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\MobilePhone", mappedBy="user", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="App\Entity\MobilePhone", mappedBy="user", cascade={"persist", "remove"})
      * @Serializer\Since("1.0")
      */
     private $phoneChoice;

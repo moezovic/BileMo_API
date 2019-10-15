@@ -32,4 +32,17 @@ class MobilePhoneRepository extends AbstractRepository
         return $this->paginate($qb, $limit, $offset);
     }
 
+
+    public function findproductByUser($value)
+    {
+        return $this->createQueryBuilder('m')
+            ->join("m.user", "u")
+            ->andWhere('u.id = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+
 }

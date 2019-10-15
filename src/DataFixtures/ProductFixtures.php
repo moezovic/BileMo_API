@@ -55,13 +55,14 @@ class ProductFixtures extends Fixture
             $weight = $bulkPhoneData['weight'][array_rand($bulkPhoneData['weight'])];
             $phone->setWeight($weight);
 
+            // make a reference to phone object to be used in other fixture file
+            $this->addReference("product_".$i, $phone);
             // Persist the phone
             $manager->persist($phone);
 
         }
 
         $manager->flush();
-        // make a reference to phone object to be used in other fixture file
-        $this->addReference(self::PRODUCT_REFERENCE, $phone);
+
     }
 }

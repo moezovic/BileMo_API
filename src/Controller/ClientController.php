@@ -107,6 +107,7 @@ class ClientController extends AbstractFOSRestController
      * @Get(
      *      path = "/api/users/{id}",
      *      name = "show_user_details",
+     *      requirements = {"id"="\d+"}
      * )
      * @View(StatusCode = 200,
      *       serializerGroups={"detail"})
@@ -252,6 +253,14 @@ class ClientController extends AbstractFOSRestController
         if($userClientId !== $this->getUser()->getId()){
             throw new NotAuthorizedException('You are not authorized to access this data');
         }
+
+        // Detach associated product before user removal
+        $product = $this->getDoctrine()
+            ->getRepository(MobilePhone::class)
+            ->findproductByUser($user->getId());
+
+        $user->removePhoneChoice($product);
+        $this->em->persist($user);
         $this->em->remove($user);
         $this->em->flush();
 
